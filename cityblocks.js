@@ -40,6 +40,8 @@ let objects = [];
 let mapArr = [];
 
 function initGrid() {
+	console.log("init");
+	mapArr = [];
 	for (let i = 0; i < GRID_WIDTH; i++) {
 		let mapYArr = [];
 		for (let j = 0; j < GRID_HEIGHT; j++) {
@@ -72,9 +74,29 @@ function getRandomSubarray(arr, size) {
     return shuffled.slice(min);
 }
 
-function generate(steps) {
+let canvas = document.getElementById('cityBlocks');
+var ctx = "";
+if (canvas.getContext) {
+	var ctx = canvas.getContext('2d');
+	ctx.lineWidth = 2;
+}
+
+function clear(canvas) {
+	var ctx = canvas.getContext('2d');
+	mapArr = [];
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function generate() {
+let steps = $("#stepsField")[0].value;
+	if (steps < 0)
+		steps = 300
+	
+	console.log("generate");
+	clear(canvas);
 	initGrid();
 
+	ctx.beginPath();
 	for (let s = 0; s < steps; s++) {
 		let randX = getRandomInt(0, mapArr.length);
 		let randY = getRandomInt(0, mapArr[randX].length);
@@ -111,18 +133,8 @@ function generate(steps) {
 		otherNewNode.addNeighbors(newNode);
 		mapArr[0].push(otherNewNode);
 	}
-}
 
-let canvas = document.getElementById('cityBlocks');
-var ctx = "";
-if (canvas.getContext) {
-	var ctx = canvas.getContext('2d');
-	ctx.lineWidth = 2;
-}
-
-generate(300);
-
-for (let i = 0; i < mapArr.length; i++) {
+	for (let i = 0; i < mapArr.length; i++) {
 	for (let j = 0; j < mapArr[i].length; j++) {
 		let coords = mapArr[i][j].pos;
 		// draw nodes, for debug purposes only
@@ -133,6 +145,13 @@ for (let i = 0; i < mapArr.length; i++) {
 	 		ctx.lineTo(neighborActualCoords[0] + 2, neighborActualCoords[1] + 2);
 		}
 	}
+	ctx.stroke();
+}
 }
 
-ctx.stroke();
+let steps = $("#stepsField")[0].value;
+if (steps < 0)
+	steps = 250
+
+
+generate(steps);
