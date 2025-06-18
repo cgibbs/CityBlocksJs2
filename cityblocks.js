@@ -34,12 +34,28 @@ GRID_HEIGHT = 10;
 GRID_SPACE = 50;
 CANVAS_OFFSET = 150;
 RANDOM_OFFSET = 5;
+NEIGHBOR_IMPERFECTION = 1;
 
 let nodes = [];
 let objects = [];
 let mapArr = [];
 
 function initGrid() {
+	console.log($("#spacingField")[0]);
+	console.log($("#widthField")[0]);
+	console.log($("#heightField")[0]);
+	let GRID_SPACE = $("#spacingField")[0].value;
+	if (GRID_SPACE < 0) GRID_SPACE = 50;
+
+	let GRID_WIDTH = $("#widthField")[0].value;
+	if (GRID_WIDTH < 0) GRID_WIDTH = 10;
+
+	let GRID_HEIGHT = $("#heightField")[0].value;
+	if (GRID_HEIGHT < 0) GRID_HEIGHT = 10;
+
+	let NEIGHBOR_IMPERFECTION = $("#imperfectionField")[0].value;
+	if (NEIGHBOR_IMPERFECTION < 0) NEIGHBOR_IMPERFECTION = 1; 
+ 
 	console.log("init");
 	mapArr = [];
 	for (let i = 0; i < GRID_WIDTH; i++) {
@@ -58,7 +74,7 @@ function initGrid() {
 			if ((typeof(mapArr[i]) !== "undefined") && (typeof(mapArr[i][j+1]) !== "undefined")) neighborArr.push(mapArr[i][j+1]);
 			if ((typeof(mapArr[i+1]) !== "undefined") && (typeof(mapArr[i+1][j]) !== "undefined")) neighborArr.push(mapArr[i+1][j]);
 
-			mapArr[i][j].addNeighbors(getRandomSubarray(neighborArr, getRandomInt(1,3)));
+			mapArr[i][j].addNeighbors(getRandomSubarray(neighborArr, getRandomInt(NEIGHBOR_IMPERFECTION, 3)));
 		}
 	}
 }
@@ -88,7 +104,7 @@ function clear(canvas) {
 }
 
 function generate() {
-let steps = $("#stepsField")[0].value;
+	let steps = $("#stepsField")[0].value;
 	if (steps < 0)
 		steps = 300
 	
@@ -103,6 +119,8 @@ let steps = $("#stepsField")[0].value;
 
 		let randNode = mapArr[randX][randY];
 		let randNeighbor = randomChoice(randNode.neighbors);
+
+		if (!randNeighbor) continue;
 
 		let newNodeX = (randNode.pos[0] + randNeighbor.pos[0]) / 2;
 		let newNodeY = (randNode.pos[1] + randNeighbor.pos[1]) / 2;
